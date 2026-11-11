@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SICX RedFlag - Painel de Risco Imediato</title>
+<style>
+  :root {
+    --fundo: #0d0b0b;
+    --superficie: #171212;
+    --borda: #2a1f1f;
+    --vermelho: #d32f2f;
+    --vermelho-claro: #ef5350;
+    --texto: #e8e2e2;
+    --texto-fraco: #9a8f8f;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--fundo);
+    color: var(--texto);
+    font-family: "Segoe UI", Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  header {
+    border-bottom: 2px solid var(--vermelho);
+    padding: 20px 32px;
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+  }
+  header h1 { font-size: 20px; letter-spacing: 2px; text-transform: uppercase; color: var(--vermelho-claro); }
+  header span { color: var(--texto-fraco); font-size: 13px; }
+  main { flex: 1; padding: 32px; max-width: 1100px; width: 100%; margin: 0 auto; }
+  h2 { font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: var(--texto-fraco); margin: 28px 0 12px; }
+  .cartoes { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+  .cartao {
+    background: var(--superficie);
+    border: 1px solid var(--borda);
+    border-left: 3px solid var(--vermelho);
+    padding: 16px;
+  }
+  .cartao .valor { font-size: 28px; font-weight: 700; color: var(--vermelho-claro); }
+  .cartao .rotulo { font-size: 12px; color: var(--texto-fraco); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--borda); }
+  th { color: var(--texto-fraco); text-transform: uppercase; font-size: 11px; letter-spacing: 1px; }
+  .sev-critica { color: #ff5252; font-weight: 700; }
+  .sev-alta { color: #ff8a80; }
+  .sev-media { color: #e0c068; }
+  .sev-baixa { color: #8fa88f; }
+  .vazio { color: var(--texto-fraco); padding: 24px 0; font-size: 13px; }
+  footer { border-top: 1px solid var(--borda); padding: 16px 32px; font-size: 12px; color: var(--texto-fraco); }
+
+  #gate {
+    position: fixed; inset: 0;
+    background: var(--fundo);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 10;
+  }
+  #gate .caixa {
+    background: var(--superficie);
+    border: 1px solid var(--borda);
+    border-top: 3px solid var(--vermelho);
+    padding: 40px;
+    width: 360px;
+  }
+  #gate h1 { font-size: 16px; color: var(--vermelho-claro); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
+  #gate p { font-size: 12px; color: var(--texto-fraco); margin-bottom: 20px; line-height: 1.5; }
+  #gate input {
+    width: 100%; padding: 10px 12px;
+    background: var(--fundo); color: var(--texto);
+    border: 1px solid var(--borda); outline: none;
+    font-size: 14px;
+  }
+  #gate input:focus { border-color: var(--vermelho); }
+  #gate button {
+    width: 100%; margin-top: 12px; padding: 10px;
+    background: var(--vermelho); color: #fff; border: none;
+    font-size: 13px; text-transform: uppercase; letter-spacing: 1px;
+    cursor: pointer;
+  }
+  #gate button:hover { background: var(--vermelho-claro); }
+  #gate .erro { color: var(--vermelho-claro); font-size: 12px; margin-top: 10px; min-height: 16px; }
+  .oculto { display: none !important; }
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="caixa">
+    <h1>SICX RedFlag</h1>
+    <p>Acesso restrito a operadores internos autorizados. Informe a chave de operador para liberar o painel.</p>
+    <input type="password" id="chave" placeholder="Chave de operador" autocomplete="off">
+    <button onclick="tentarAcesso()">Desbloquear</button>
+    <div class="erro" id="erro"></div>
+  </div>
+</div>
+
+<header>
+  <h1>SICX RedFlag</h1>
+  <span>Painel de sinalizacao de risco imediato - uso interno</span>
+</header>
+
+<main>
+  <h2>Alertas por severidade</h2>
+  <div class="cartoes">
+    <div class="cartao"><div class="valor" id="total">-</div><div class="rotulo">Total</div></div>
+    <div class="cartao"><div class="valor" id="critica">-</div><div class="rotulo">Critica</div></div>
+    <div class="cartao"><div class="valor" id="alta">-</div><div class="rotulo">Alta</div></div>
+    <div class="cartao"><div class="valor" id="media">-</div><div class="rotulo">Media</div></div>
+    <div class="cartao"><div class="valor" id="baixa">-</div><div class="rotulo">Baixa</div></div>
+  </div>
+
+  <h2>Alertas registrados (alerts.jsonl, append-only)</h2>
+  <table id="tabela">
+    <thead>
+      <tr><th>Timestamp</th><th>RedFlag</th><th>Severidade</th><th>Acao recomendada</th><th>Playbook</th></tr>
+    </thead>
+    <tbody id="corpo"></tbody>
+  </table>
+  <div class="vazio oculto" id="vazio">Nenhum alerta carregado. Execute o motor de avaliacao para gerar alerts.jsonl.</div>
+</main>
+
+<footer>
+  Uso interno. Toda acao de contencao requer aprovacao humana registrada. Nenhuma acao destrutiva e executada automaticamente.
+</footer>
+
+<script>
+/*
+ * Controle de acesso:
+ * A chave do operador e comparada por SHA-256 com o valor de CONFIG.hashOperador.
+ * Enquanto o valor estiver vazio, o painel permanece bloqueado para qualquer
+ * pessoa, mesmo conhecendo o funcionamento. A equipe interna deve definir
+ * CONFIG.hashOperador com o SHA-256 hex da chave, provisionado fora deste
+ * repositorio. O bloqueio definitivo de usuarios externos e feito na camada
+ * de rede/identidade: este painel deve ser servido apenas em rede interna.
+ */
+var CONFIG = { hashOperador: "" };
+
+async function sha256(texto) {
+  var bytes = new TextEncoder().encode(texto);
+  var digesto = await crypto.subtle.digest("SHA-256", bytes);
+  return Array.from(new Uint8Array(digesto))
+    .map(function (b) { return b.toString(16).padStart(2, "0"); })
+    .join("");
+}
+
+async function tentarAcesso() {
+  var erro = document.getElementById("erro");
+  if (!CONFIG.hashOperador) {
+    erro.textContent = "Painel bloqueado: hash do operador nao provisionado.";
+    return;
+  }
+  var chave = document.getElementById("chave").value;
+  var hash = await sha256(chave);
+  if (hash !== CONFIG.hashOperador) {
+    erro.textContent = "Chave invalida. Acesso negado.";
+    document.getElementById("chave").value = "";
+    return;
+  }
+  document.getElementById("gate").classList.add("oculto");
+  carregarAlertas();
+}
+
+function linha(alerta) {
+  var tr = document.createElement("tr");
+  var campos = [
+    alerta.timestamp || "",
+    alerta.redflag || "",
+    alerta.severidade || "",
+    alerta.acao_recomendada || "",
+    alerta.playbook || ""
+  ];
+  campos.forEach(function (valor, i) {
+    var td = document.createElement("td");
+    td.textContent = valor;
+    if (i === 2) td.className = "sev-" + valor;
+    tr.appendChild(td);
+  });
+  return tr;
+}
+
+function carregarAlertas() {
+  var contadores = { critica: 0, alta: 0, media: 0, baixa: 0 };
+  fetch("./alerts.jsonl")
+    .then(function (r) { if (!r.ok) throw new Error("indisponivel"); return r.text(); })
+    .then(function (texto) {
+      var corpo = document.getElementById("corpo");
+      var linhas = texto.split("\n").filter(function (l) { return l.trim(); });
+      linhas.forEach(function (l) {
+        try {
+          var alerta = JSON.parse(l);
+          corpo.appendChild(linha(alerta));
+          if (contadores[alerta.severidade] !== undefined) contadores[alerta.severidade]++;
+        } catch (e) { /* linha invalida ignorada */ }
+      });
+      document.getElementById("total").textContent = linhas.length;
+      document.getElementById("critica").textContent = contadores.critica;
+      document.getElementById("alta").textContent = contadores.alta;
+      document.getElementById("media").textContent = contadores.media;
+      document.getElementById("baixa").textContent = contadores.baixa;
+      if (!linhas.length) document.getElementById("vazio").classList.remove("oculto");
+    })
+    .catch(function () {
+      document.getElementById("vazio").classList.remove("oculto");
+      ["total", "critica", "alta", "media", "baixa"].forEach(function (id) {
+        document.getElementById(id).textContent = "0";
+      });
+    });
+}
+</script>
+</body>
+</html>

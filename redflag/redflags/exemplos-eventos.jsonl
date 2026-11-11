@@ -1,0 +1,12 @@
+{"timestamp": "2025-01-01T10:00:00Z", "evento": "movimentacao_lateral", "origem": "<HOSTNAME_APP>", "destino": "banco_dados", "porta": 3306, "detalhe": "conexoes repetidas fora do padrao"}
+{"timestamp": "2025-01-01T10:05:00Z", "evento": "egress_suspeito", "origem": "<HOSTNAME_APP>", "destino": "<IP_SUSPEITO>", "porta": 443, "detalhe": "destino sem reputacao conhecida"}
+{"timestamp": "2025-01-01T10:10:00Z", "evento": "token_ativo_pos_incidente", "origem": "<HOSTNAME_API>", "detalhe": "token de integracao emitido antes do incidente ainda valido"}
+{"timestamp": "2025-01-01T10:15:00Z", "evento": "credencial_sem_reset", "origem": "<CONTA_SERVICO>", "detalhe": "credencial administrativa sem rotacao desde antes do incidente"}
+{"timestamp": "2025-01-01T10:20:00Z", "evento": "sessao_suspeita", "origem": "<USUARIO>", "ip_origem": "<IP_SUSPEITO>", "detalhe": "troca de user agent no meio da sessao"}
+{"timestamp": "2025-01-01T10:25:00Z", "evento": "superusuario_excessivo", "origem": "<USUARIO>", "detalhe": "privilegio de superusuario sem justificativa registrada"}
+{"timestamp": "2025-01-01T10:30:00Z", "evento": "backup_sem_integridade", "origem": "<REPOSITORIO_BACKUP>", "detalhe": "backup sem manifesto de hash e sem copia air-gapped"}
+{"timestamp": "2025-01-01T10:35:00Z", "evento": "hash_divergente", "origem": "<HOSTNAME_APP>", "caminho": "<CAMINHO_BINARIO>", "detalhe": "hash do binario difere do original confiavel"}
+{"timestamp": "2025-01-01T10:40:00Z", "evento": "log_ausente", "origem": "<SERVIDOR_LOGS>", "detalhe": "lacuna de logs em janela sensivel do incidente"}
+{"timestamp": "2025-01-01T10:45:00Z", "evento": "powershell_suspeito", "origem": "<HOSTNAME_WS>", "linha_de_comando": "<LINHA_DE_COMANDO>", "detalhe": "execucao codificada detectada pelo EDR"}
+{"timestamp": "2025-01-01T10:50:00Z", "evento": "honeypot_acessado", "origem": "<HOSTNAME_APP>", "detalhe": "leitura de arquivo isca em compartilhamento interno"}
+{"timestamp": "2025-01-01T10:55:00Z", "evento": "vulnerabilidade_critica", "origem": "<HOSTNAME_APP>", "detalhe": "varredura identificou vulnerabilidade critica exploravel"}

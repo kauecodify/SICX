@@ -1,0 +1,52 @@
+// Consultas KQL de exemplo para o painel de RedFlags do SICX.
+// Adapte nomes de tabela e campos ao ambiente real da organizacao.
+
+// RedFlags criticas abertas nas ultimas 24 horas
+AlertEvidence
+| where TimeGenerated > ago(24h)
+| where Severity == "High" and Title startswith "RF-"
+| where Title matches regex @"RF-(RED|ACC|DAT|MON)-\d+"
+| summarize Alertas = count() by RedFlag = Title
+| order by Alertas desc
+
+// Egress suspeito: conexoes de saida para IPs nao permitidos
+CommonSecurityLog
+| where TimeGenerated > ago(1h)
+| where TrafficDirection == "Outbound"
+| where DestinationIP !in ("<IP_PERMITIDO_1>", "<IP_PERMITIDO_2>")
+| summarize Conexoes = count() by SourceIP, DestinationIP, DestinationPort
+| order by Conexoes desc
+
+// Movimentacao lateral: conexoes entre servidores internos fora da linha de base
+CommonSecurityLog
+| where TimeGenerated > ago(15m)
+| where SourceIP in ("<REDE_SERVIDORES>") and DestinationIP in ("<REDE_BANCO_DADOS>")
+| where Activity != "Consulta autorizada"
+| summarize Conexoes = count() by SourceIP, DestinationIP, DestinationPort
+
+// Tentativas de autenticacao com credencial de servico apos reset
+SigninLogs
+| where TimeGenerated > ago(4h)
+| where AppDisplayName == "<APLICACAO_SICX>"
+| where ResultType != 0
+| summarize Falhas = count() by UserPrincipalName, IPAddress
+| order by Falhas desc
+
+// Execucao suspeita de PowerShell
+SecurityEvent
+| where TimeGenerated > ago(15m)
+| where EventID == 4688 and NewProcessName contains "powershell"
+| where CommandLine has "-enc" or CommandLine has "-w hidden"
+| project TimeGenerated, Computer, SubjectUserName, CommandLine
+
+// Acesso a honeypot ou arquivo isca
+Syslog
+| where TimeGenerated > ago(15m)
+| where HostName == "<HOSTNAME_HONEYPOT>"
+| summarize Acessos = count() by SourceIP, Message
+
+// Lacunas de ingestao de logs por fonte
+Heartbeat
+| summarize Ultimo = max(TimeGenerated) by Computer
+| where Ultimo < ago(1h)
+| project Computer, Ultimo

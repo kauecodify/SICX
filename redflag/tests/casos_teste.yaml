@@ -1,0 +1,132 @@
+versao: 1
+descricao: "Casos de teste declarativos para as regras criticas e demais RedFlags do SICX"
+arquivo_regras: "../redflags/redflags.yaml"
+casos:
+  - nome: "movimentacao lateral para banco de dados dispara RF-RED-01"
+    evento:
+      timestamp: "2025-01-01T10:00:00Z"
+      evento: movimentacao_lateral
+      origem: "<HOSTNAME_APP>"
+      destino: banco_dados
+    deve_disparar: true
+    redflag_esperada: RF-RED-01
+    severidade_esperada: critica
+
+  - nome: "movimentacao lateral para destino externo nao dispara RF-RED-01"
+    evento:
+      timestamp: "2025-01-01T10:01:00Z"
+      evento: movimentacao_lateral
+      origem: "<HOSTNAME_APP>"
+      destino: internet
+    deve_disparar: false
+    redflag_esperada: RF-RED-01
+
+  - nome: "token ativo pos-incidente dispara RF-RED-02"
+    evento:
+      timestamp: "2025-01-01T10:02:00Z"
+      evento: token_ativo_pos_incidente
+      origem: "<HOSTNAME_API>"
+    deve_disparar: true
+    redflag_esperada: RF-RED-02
+    severidade_esperada: alta
+
+  - nome: "egress suspeito dispara RF-RED-03"
+    evento:
+      timestamp: "2025-01-01T10:03:00Z"
+      evento: egress_suspeito
+      origem: "<HOSTNAME_APP>"
+      destino: "<IP_SUSPEITO>"
+    deve_disparar: true
+    redflag_esperada: RF-RED-03
+    severidade_esperada: critica
+
+  - nome: "credencial sem reset dispara RF-ACC-01"
+    evento:
+      timestamp: "2025-01-01T10:04:00Z"
+      evento: credencial_sem_reset
+      origem: "<CONTA_SERVICO>"
+    deve_disparar: true
+    redflag_esperada: RF-ACC-01
+    severidade_esperada: critica
+
+  - nome: "sessao suspeita dispara RF-ACC-02"
+    evento:
+      timestamp: "2025-01-01T10:05:00Z"
+      evento: sessao_suspeita
+      origem: "<USUARIO>"
+      ip_origem: "<IP_SUSPEITO>"
+    deve_disparar: true
+    redflag_esperada: RF-ACC-02
+    severidade_esperada: alta
+
+  - nome: "superusuario excessivo dispara RF-ACC-03"
+    evento:
+      timestamp: "2025-01-01T10:06:00Z"
+      evento: superusuario_excessivo
+      origem: "<USUARIO>"
+    deve_disparar: true
+    redflag_esperada: RF-ACC-03
+    severidade_esperada: media
+
+  - nome: "backup sem integridade dispara RF-DAT-01"
+    evento:
+      timestamp: "2025-01-01T10:07:00Z"
+      evento: backup_sem_integridade
+      origem: "<REPOSITORIO_BACKUP>"
+    deve_disparar: true
+    redflag_esperada: RF-DAT-01
+    severidade_esperada: alta
+
+  - nome: "hash divergente dispara RF-DAT-02"
+    evento:
+      timestamp: "2025-01-01T10:08:00Z"
+      evento: hash_divergente
+      origem: "<HOSTNAME_APP>"
+      caminho: "<CAMINHO_BINARIO>"
+    deve_disparar: true
+    redflag_esperada: RF-DAT-02
+    severidade_esperada: critica
+
+  - nome: "log ausente dispara RF-DAT-03"
+    evento:
+      timestamp: "2025-01-01T10:09:00Z"
+      evento: log_ausente
+      origem: "<SERVIDOR_LOGS>"
+    deve_disparar: true
+    redflag_esperada: RF-DAT-03
+    severidade_esperada: critica
+
+  - nome: "powershell suspeito dispara RF-MON-01"
+    evento:
+      timestamp: "2025-01-01T10:10:00Z"
+      evento: powershell_suspeito
+      origem: "<HOSTNAME_WS>"
+    deve_disparar: true
+    redflag_esperada: RF-MON-01
+    severidade_esperada: alta
+
+  - nome: "acesso a honeypot dispara RF-MON-02"
+    evento:
+      timestamp: "2025-01-01T10:11:00Z"
+      evento: honeypot_acessado
+      origem: "<HOSTNAME_APP>"
+    deve_disparar: true
+    redflag_esperada: RF-MON-02
+    severidade_esperada: critica
+
+  - nome: "vulnerabilidade critica dispara RF-MON-03"
+    evento:
+      timestamp: "2025-01-01T10:12:00Z"
+      evento: vulnerabilidade_critica
+      origem: "<HOSTNAME_APP>"
+    deve_disparar: true
+    redflag_esperada: RF-MON-03
+    severidade_esperada: media
+
+  - nome: "evento de rotina nao dispara nenhuma RedFlag"
+    evento:
+      timestamp: "2025-01-01T10:13:00Z"
+      evento: backup_concluido
+      origem: "<REPOSITORIO_BACKUP>"
+    deve_disparar: false
+    redflag_esperada: null

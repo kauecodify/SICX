@@ -1,0 +1,184 @@
+versao: 1
+atualizado_em: "<DATA>"
+descricao: "Regras de RedFlag (sinalizacao de risco imediato) para mitigacao pos-incidente no SICX"
+regras:
+  - id: RF-RED-01
+    nome: "Movimentacao lateral entre servidor de aplicacao e banco de dados ou outros servidores"
+    categoria: rede
+    severidade: critica
+    fonte: [ids, firewall, netflow]
+    condicao:
+      evento: movimentacao_lateral
+      destino: [banco_dados, servidor_interno]
+    janela: "5m"
+    acao_imediata: "Isolar o host de origem na rede e preservar evidencias antes de qualquer reinicializacao"
+    playbook: "playbooks/PB-01-isolamento-rede.md"
+    responsavel: "<RESPONSAVEL_REDE>"
+    sla: "15m"
+    evidencia_necessaria: [captura_de_trafego, log_de_conexoes, lista_de_processos]
+    requer_aprovacao_humana: true
+
+  - id: RF-RED-02
+    nome: "Endpoint de API externo ou token de acesso ativo apos o incidente"
+    categoria: rede
+    severidade: alta
+    fonte: [gateway_api, logs_de_aplicacao, gestor_de_tokens]
+    condicao:
+      evento: [api_externa_ativa, token_ativo_pos_incidente]
+    janela: "1h"
+    acao_imediata: "Revogar o token e desativar o endpoint exposto apos registro de evidencia"
+    playbook: "playbooks/PB-02-reset-credenciais-mfa.md"
+    responsavel: "<RESPONSAVEL_ACESSO>"
+    sla: "1h"
+    evidencia_necessaria: [log_do_gateway, registro_do_token, escopo_do_endpoint]
+    requer_aprovacao_humana: true
+
+  - id: RF-RED-03
+    nome: "Trafego egress para IP desconhecido ou suspeito de C2"
+    categoria: rede
+    severidade: critica
+    fonte: [firewall, proxy, ids]
+    condicao:
+      evento: egress_suspeito
+    janela: "5m"
+    acao_imediata: "Bloquear o egress para o destino indicado e capturar o trafego restante"
+    playbook: "playbooks/PB-01-isolamento-rede.md"
+    responsavel: "<RESPONSAVEL_REDE>"
+    sla: "15m"
+    evidencia_necessaria: [log_do_firewall, destino_e_porta, captura_de_pacotes]
+    requer_aprovacao_humana: true
+
+  - id: RF-ACC-01
+    nome: "Credencial administrativa ou de servico sem reset apos o incidente"
+    categoria: acesso
+    severidade: critica
+    fonte: [gestor_de_identidade, gestor_de_segredos]
+    condicao:
+      evento: credencial_sem_reset
+    janela: "24h"
+    acao_imediata: "Resetar a credencial e invalidar dependentes conforme playbook"
+    playbook: "playbooks/PB-02-reset-credenciais-mfa.md"
+    responsavel: "<RESPONSAVEL_ACESSO>"
+    sla: "4h"
+    evidencia_necessaria: [inventario_de_credenciais, data_do_ultimo_reset, titular_da_conta]
+    requer_aprovacao_humana: true
+
+  - id: RF-ACC-02
+    nome: "Sessao ativa suspeita ou indicio de session hijacking"
+    categoria: acesso
+    severidade: alta
+    fonte: [logs_de_aplicacao, waf, gestor_de_sessoes]
+    condicao:
+      evento: sessao_suspeita
+    janela: "15m"
+    acao_imediata: "Invalidar a sessao indicada e exigir reautenticacao com MFA"
+    playbook: "playbooks/PB-02-reset-credenciais-mfa.md"
+    responsavel: "<RESPONSAVEL_ACESSO>"
+    sla: "30m"
+    evidencia_necessaria: [id_da_sessao, ip_de_origem, user_agent, log_de_autenticacao]
+    requer_aprovacao_humana: true
+
+  - id: RF-ACC-03
+    nome: "Conta com privilegio de superusuario fora do minimo necessario"
+    categoria: acesso
+    severidade: media
+    fonte: [gestor_de_identidade, revisao_de_acessos]
+    condicao:
+      evento: superusuario_excessivo
+    janela: "24h"
+    acao_imediata: "Reduzir privilegios ao minimo necessario mediante aprovacao"
+    playbook: "playbooks/PB-02-reset-credenciais-mfa.md"
+    responsavel: "<RESPONSAVEL_ACESSO>"
+    sla: "24h"
+    evidencia_necessaria: [lista_de_privilegios, justificativa_do_acesso, data_da_concessao]
+    requer_aprovacao_humana: true
+
+  - id: RF-DAT-01
+    nome: "Backup sem validacao de integridade ou sem copia air-gapped"
+    categoria: dados
+    severidade: alta
+    fonte: [rotina_de_backup, repositorio_de_backups]
+    condicao:
+      evento: backup_sem_integridade
+    janela: "24h"
+    acao_imediata: "Suspender uso do backup afetado e acionar validacao conforme playbook"
+    playbook: "playbooks/PB-03-restauracao-backup-air-gapped.md"
+    responsavel: "<RESPONSAVEL_DADOS>"
+    sla: "8h"
+    evidencia_necessaria: [manifesto_de_hash, localizacao_da_copia, relatorio_de_validacao]
+    requer_aprovacao_humana: true
+
+  - id: RF-DAT-02
+    nome: "Hash de binario ou biblioteca divergente do original"
+    categoria: dados
+    severidade: critica
+    fonte: [verificacao_de_integridade, edr, inventario_de_software]
+    condicao:
+      evento: hash_divergente
+    janela: "1h"
+    acao_imediata: "Quarentena do artefato e comparacao com original confiavel, sem remocao automatica"
+    playbook: "playbooks/PB-04-verificacao-hash-binarios.md"
+    responsavel: "<RESPONSAVEL_DADOS>"
+    sla: "2h"
+    evidencia_necessaria: [hash_calculado, hash_de_referencia, caminho_do_arquivo, data_de_alteracao]
+    requer_aprovacao_humana: true
+
+  - id: RF-DAT-03
+    nome: "Log apagado, alterado ou ausente em servidor de logs imutavel"
+    categoria: dados
+    severidade: critica
+    fonte: [servidor_de_logs, monitoramento_de_integridade]
+    condicao:
+      evento: [log_ausente, log_alterado]
+    janela: "1h"
+    acao_imediata: "Preservar o estado atual do servidor de logs e abrir cadeia de custodia"
+    playbook: "playbooks/PB-05-logs-imutaveis.md"
+    responsavel: "<RESPONSAVEL_DADOS>"
+    sla: "1h"
+    evidencia_necessaria: [snapshot_do_servidor_de_logs, lacuna_detectada, hash_do_estado_atual]
+    requer_aprovacao_humana: true
+
+  - id: RF-MON-01
+    nome: "Execucao suspeita de PowerShell ou comportamento anomalo detectado por EDR"
+    categoria: monitoramento
+    severidade: alta
+    fonte: [edr, logs_de_eventos]
+    condicao:
+      evento: [powershell_suspeito, comportamento_anomalo_edr]
+    janela: "15m"
+    acao_imediata: "Isolar o endpoint no EDR (modo contencao) e coletar telemetria"
+    playbook: "playbooks/PB-06-edr-threat-hunting.md"
+    responsavel: "<RESPONSAVEL_MONITORAMENTO>"
+    sla: "30m"
+    evidencia_necessaria: [linha_de_comando, processo_pai, hash_do_binario, telemetria_edr]
+    requer_aprovacao_humana: true
+
+  - id: RF-MON-02
+    nome: "Acesso a honeypot interno ou arquivo isca"
+    categoria: monitoramento
+    severidade: critica
+    fonte: [honeypot, sistema_de_arquivos]
+    condicao:
+      evento: honeypot_acessado
+    janela: "5m"
+    acao_imediata: "Tratar o host de origem como comprometido e acionar threat hunting"
+    playbook: "playbooks/PB-07-honeypots-e-varredura.md"
+    responsavel: "<RESPONSAVEL_MONITORAMENTO>"
+    sla: "15m"
+    evidencia_necessaria: [log_do_honeypot, identidade_do_origem, sequencia_de_acessos]
+    requer_aprovacao_humana: true
+
+  - id: RF-MON-03
+    nome: "Vulnerabilidade critica exploravel identificada em varredura"
+    categoria: monitoramento
+    severidade: media
+    fonte: [varredor_de_vulnerabilidades]
+    condicao:
+      evento: vulnerabilidade_critica
+    janela: "24h"
+    acao_imediata: "Priorizar correcao ou compensacao e registrar na fila de tratativa"
+    playbook: "playbooks/PB-07-honeypots-e-varredura.md"
+    responsavel: "<RESPONSAVEL_MONITORAMENTO>"
+    sla: "48h"
+    evidencia_necessaria: [id_da_vulnerabilidade, host_afetado, relatorio_da_varredura]
+    requer_aprovacao_humana: true

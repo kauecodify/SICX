@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sicx.local/redflag/schema.json",
+  "title": "Schema de regras RedFlag do SICX",
+  "type": "object",
+  "required": ["versao", "regras"],
+  "properties": {
+    "versao": { "type": "integer", "minimum": 1 },
+    "atualizado_em": { "type": "string" },
+    "descricao": { "type": "string" },
+    "regras": {
+      "type": "array",
+      "minItems": 12,
+      "items": { "$ref": "#/$defs/regra" }
+    }
+  },
+  "$defs": {
+    "regra": {
+      "type": "object",
+      "required": [
+        "id", "nome", "categoria", "severidade", "fonte", "condicao",
+        "janela", "acao_imediata", "playbook", "responsavel", "sla",
+        "evidencia_necessaria", "requer_aprovacao_humana"
+      ],
+      "properties": {
+        "id": { "type": "string", "pattern": "^RF-(RED|ACC|DAT|MON)-[0-9]{2}$" },
+        "nome": { "type": "string", "minLength": 1 },
+        "categoria": { "enum": ["rede", "acesso", "dados", "monitoramento"] },
+        "severidade": { "enum": ["critica", "alta", "media", "baixa"] },
+        "fonte": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "condicao": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "anyOf": [
+              { "type": "string" },
+              { "type": "array", "minItems": 1, "items": { "type": "string" } }
+            ]
+          }
+        },
+        "janela": { "type": "string" },
+        "acao_imediata": { "type": "string", "minLength": 1 },
+        "playbook": { "type": "string", "pattern": "^playbooks/PB-[0-9]{2}-.*\\.md$" },
+        "responsavel": { "type": "string" },
+        "sla": { "type": "string" },
+        "evidencia_necessaria": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "requer_aprovacao_humana": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

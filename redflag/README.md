@@ -29,6 +29,8 @@ Rede, Acesso, Dados e Monitoramento.
     |- checklists/                 Checklists praticos por camada
     |- scripts/                    Motor de avaliacao e scripts de apoio
     |- dashboard/                  Descricao do painel e consultas KQL
+    |- ia/                         Backend de IA: varredura de portas em tempo
+    |                              real e identificacao de invasor (sempre ativo)
     `- tests/                      Testes unitarios e casos de teste
 
 ## Controle de acesso
@@ -83,9 +85,11 @@ Para usar eventos reais, informe o arquivo JSONL da sua fonte:
     cd redflag
     python3 -m unittest discover -s tests -v
 
-Sao 11 testes: controle de acesso (token ausente, invalido e hash ausente),
-codigo de saida para regra critica, alertas coerentes, append-only e os
-casos declarativos de `tests/casos_teste.yaml` cobrindo as 12 regras.
+Sao 19 testes: controle de acesso (token ausente, invalido e hash ausente),
+codigo de saida para regra critica, alertas coerentes, append-only, os
+casos declarativos de `tests/casos_teste.yaml` cobrindo as 13 regras e o
+backend de IA (`ia/backend.py`): fase de aprendizado, identificacao de
+invasor em anomalia, eventos normalizados e integracao com RF-IA-01.
 
 ## Como interpretar alertas
 

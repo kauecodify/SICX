@@ -1,0 +1,14 @@
+versao: 1
+descricao: "Configuracao do backend de IA - operacao de seguranca sempre ativa"
+
+modo: todas_as_portas
+intervalo_segundos: 5
+min_amostras_baseline: 10
+limiar_anomalia: 70
+
+portas_servicos_internas: [22, 80, 443, 3306, 5432, 6379, 8080]
+
+incidentes:
+  santow:
+    porta: "<PORTA_INCIDENTE_SANTOW>"
+    descricao: "Porta afetada no incidente de santow - prioridade de monitoramento"

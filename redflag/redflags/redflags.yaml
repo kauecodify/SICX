@@ -182,3 +182,18 @@ regras:
     sla: "48h"
     evidencia_necessaria: [id_da_vulnerabilidade, host_afetado, relatorio_da_varredura]
     requer_aprovacao_humana: true
+
+  - id: RF-IA-01
+    nome: "Varredura ou acesso anomalo a porta detectado pela IA"
+    categoria: monitoramento
+    severidade: alta
+    fonte: [backend_ia, monitoramento_de_portas]
+    condicao:
+      evento: [varredura_portas_anomala, acesso_anomalo_porta]
+    janela: "5m"
+    acao_imediata: "Investigar a origem classificada como invasor suspeito e acionar contencao conforme playbook"
+    playbook: "playbooks/PB-07-honeypots-e-varredura.md"
+    responsavel: "<RESPONSAVEL_MONITORAMENTO>"
+    sla: "30m"
+    evidencia_necessaria: [registro_do_invasor, fatores_da_anomalia, baseline_ia]
+    requer_aprovacao_humana: true

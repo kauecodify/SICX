@@ -123,6 +123,26 @@ casos:
     redflag_esperada: RF-MON-03
     severidade_esperada: media
 
+  - nome: "varredura anomala detectada pela IA dispara RF-IA-01"
+    evento:
+      timestamp: "2025-01-01T10:14:00Z"
+      evento: varredura_portas_anomala
+      origem: "<IP_SUSPEITO>"
+      portas: [22, 80, 443, 3306, 8080]
+    deve_disparar: true
+    redflag_esperada: RF-IA-01
+    severidade_esperada: alta
+
+  - nome: "acesso anomalo a porta detectado pela IA dispara RF-IA-01"
+    evento:
+      timestamp: "2025-01-01T10:15:00Z"
+      evento: acesso_anomalo_porta
+      origem: "<IP_SUSPEITO>"
+      portas: [3306]
+    deve_disparar: true
+    redflag_esperada: RF-IA-01
+    severidade_esperada: alta
+
   - nome: "evento de rotina nao dispara nenhuma RedFlag"
     evento:
       timestamp: "2025-01-01T10:13:00Z"

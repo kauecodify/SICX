@@ -1,6 +1,9 @@
 # 06 - Matriz de RedFlags
 
-Fonte oficial das regras: `redflags/redflags.yaml`.
+Fonte oficial das regras: `redflags/redflags.yaml`. A regra RF-IA-01 e
+alimentada pelo backend de IA (`ia/backend.py`), que monitora todas as
+portas em tempo real, incluindo a porta do incidente de santow
+(configuravel em `ia/config.yaml`).
 Schema de validacao: `redflags/schema.json`.
 
 | Camada | RedFlag | Severidade | Acao Imediata | Playbook | SLA | Aprovacao |
@@ -17,6 +20,7 @@ Schema de validacao: `redflags/schema.json`.
 | Monitoramento | RF-MON-01 - Execucao suspeita de PowerShell ou comportamento anomalo no EDR | Alta | Isolar endpoint no EDR e coletar telemetria | PB-06 | 30m | Sim |
 | Monitoramento | RF-MON-02 - Acesso a honeypot interno ou arquivo isca | Critica | Tratar origem como comprometida e acionar threat hunting | PB-07 | 15m | Sim |
 | Monitoramento | RF-MON-03 - Vulnerabilidade critica exploravel identificada em varredura | Media | Priorizar correcao ou compensacao | PB-07 | 48h | Sim |
+| Monitoramento | RF-IA-01 - Varredura ou acesso anomalo a porta detectado pela IA | Alta | Investigar origem classificada como invasor suspeito | PB-07 | 30m | Sim |
 
 Notas:
 

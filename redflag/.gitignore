@@ -2,3 +2,7 @@
 alerts.jsonl
 logs/
 __pycache__/
+ia/invasores.jsonl
+ia/eventos_ia.jsonl
+ia/alertas_ia.jsonl
+ia/baseline.json

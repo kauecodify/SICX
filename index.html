@@ -1,0 +1,2116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SICX — Sistema Integrado da Cadeia Nacional</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+         :root {
+            --verde: #006B3F;
+            --verde-claro: #00875A;
+            --verde-suave: #E8F5EE;
+            --dourado: #C9A227;
+            --dourado-claro: #E5C158;
+            --azul: #002776;
+            --marfim: #FAF7F2;
+            --creme: #F5F0E6;
+            --grafite: #1A1A1A;
+            --cinza: #6B6B6B;
+            --cinza-claro: #E5E1D8;
+            --branco: #FFFFFF;
+            --sombra: 0 2px 20px rgba(0, 39, 118, 0.06);
+            --sombra-hover: 0 8px 30px rgba(0, 107, 63, 0.12);
+            --borda: 1px solid var(--cinza-claro);
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--marfim);
+            color: var(--grafite);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+        }
+        
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        /* SIDEBAR SOBERANA */
+        
+        .sidebar {
+            width: 280px;
+            background: var(--branco);
+            border-right: var(--borda);
+            padding: 2.5rem 1.5rem;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+        }
+        
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--cinza-claro);
+            margin-bottom: 2rem;
+        }
+        
+        .brand-seal {
+            width: 48px;
+            height: 48px;
+            background: var(--verde);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dourado);
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+            font-size: 1.2rem;
+            box-shadow: inset 0 0 0 2px var(--dourado);
+        }
+        
+        .brand-text h1 {
+            font-size: 1.3rem;
+            color: var(--verde);
+            line-height: 1;
+        }
+        
+        .brand-text span {
+            font-size: 0.7rem;
+            color: var(--cinza);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+        
+        .nav-section {
+            font-size: 0.7rem;
+            color: var(--cinza);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin: 1.5rem 0 0.8rem;
+            font-weight: 600;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.9rem;
+            padding: 0.75rem 1rem;
+            color: var(--grafite);
+            cursor: pointer;
+            border-radius: 6px;
+            margin-bottom: 0.25rem;
+            transition: all 0.25s ease;
+            font-size: 0.92rem;
+            font-weight: 500;
+            border-left: 3px solid transparent;
+        }
+        
+        .nav-item:hover {
+            background: var(--verde-suave);
+            color: var(--verde);
+        }
+        
+        .nav-item.active {
+            background: var(--verde-suave);
+            color: var(--verde);
+            border-left-color: var(--dourado);
+            font-weight: 600;
+        }
+        
+        .nav-icon {
+            width: 18px;
+            height: 18px;
+            stroke-width: 1.5;
+        }
+        /* MAIN */
+        
+        .main {
+            margin-left: 280px;
+            flex: 1;
+            padding: 0;
+            min-height: 100vh;
+        }
+        
+        .topbar {
+            background: var(--branco);
+            padding: 1.2rem 3rem;
+            border-bottom: var(--borda);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        
+        .breadcrumb {
+            font-size: 0.85rem;
+            color: var(--cinza);
+        }
+        
+        .breadcrumb strong {
+            color: var(--verde);
+            font-weight: 600;
+        }
+        
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--verde);
+            font-weight: 500;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--verde);
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px var(--verde-suave);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%,
+            100% {
+                box-shadow: 0 0 0 4px var(--verde-suave);
+            }
+            50% {
+                box-shadow: 0 0 0 8px rgba(0, 107, 63, 0.1);
+            }
+        }
+        
+        .user-chip {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.4rem 0.8rem;
+            background: var(--creme);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .user-avatar {
+            width: 28px;
+            height: 28px;
+            background: var(--verde);
+            color: var(--dourado);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.75rem;
+        }
+        /* CONTENT */
+        
+        .content {
+            padding: 3rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .section {
+            display: none;
+            animation: fadeUp 0.5s ease;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        /* HERO */
+        
+        .hero {
+            background: linear-gradient(135deg, var(--verde) 0%, #004D2E 100%);
+            color: var(--branco);
+            padding: 4rem 3rem;
+            border-radius: 12px;
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, var(--dourado) 0%, transparent 70%);
+            opacity: 0.15;
+            border-radius: 50%;
+        }
+        
+        .hero-tag {
+            display: inline-block;
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--dourado);
+            margin-bottom: 1rem;
+            font-weight: 600;
+            position: relative;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            position: relative;
+            max-width: 700px;
+        }
+        
+        .hero p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+        
+        .hero-stat-value {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--dourado);
+        }
+        
+        .hero-stat-label {
+            font-size: 0.8rem;
+            opacity: 0.85;
+            letter-spacing: 0.05em;
+        }
+        /* CARDS */
+        
+        .card {
+            background: var(--branco);
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: var(--sombra);
+            border: var(--borda);
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            box-shadow: var(--sombra-hover);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--cinza-claro);
+        }
+        
+        .card-title {
+            font-size: 1.4rem;
+            color: var(--verde);
+            margin-bottom: 0.3rem;
+        }
+        
+        .card-subtitle {
+            font-size: 0.85rem;
+            color: var(--cinza);
+        }
+        
+        .card-badge {
+            font-size: 0.7rem;
+            padding: 0.3rem 0.8rem;
+            background: var(--verde-suave);
+            color: var(--verde);
+            border-radius: 12px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+        
+        .card-badge.gold {
+            background: rgba(201, 162, 39, 0.15);
+            color: var(--dourado);
+        }
+        
+        .card-badge.blue {
+            background: rgba(0, 39, 118, 0.1);
+            color: var(--azul);
+        }
+        /* GRID */
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+        
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+        
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+        /* KPI CARDS */
+        
+        .kpi {
+            background: var(--branco);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: var(--borda);
+            border-left: 4px solid var(--verde);
+            transition: all 0.3s;
+        }
+        
+        .kpi:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--sombra-hover);
+        }
+        
+        .kpi-label {
+            font-size: 0.75rem;
+            color: var(--cinza);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .kpi-value {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--grafite);
+            line-height: 1;
+        }
+        
+        .kpi-trend {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            color: var(--verde);
+            font-weight: 500;
+        }
+        
+        .kpi-trend.down {
+            color: #C0392B;
+        }
+        /* CADEIA DE PRODUÇÃO */
+        
+        .cadeia-visual {
+            background: var(--branco);
+            padding: 3rem 2rem;
+            border-radius: 12px;
+            border: var(--borda);
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        
+        .cadeia-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .cadeia-title h2 {
+            font-size: 2rem;
+            color: var(--verde);
+            margin-bottom: 0.5rem;
+        }
+        
+        .cadeia-title p {
+            color: var(--cinza);
+            font-size: 0.95rem;
+        }
+        
+        .cadeia-flow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            position: relative;
+            padding: 2rem 0;
+        }
+        
+        .cadeia-node {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .cadeia-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--verde-suave);
+            border: 2px solid var(--verde);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: var(--verde);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .cadeia-icon:hover {
+            background: var(--verde);
+            color: var(--dourado);
+            transform: scale(1.08);
+        }
+        
+        .cadeia-icon svg {
+            width: 36px;
+            height: 36px;
+        }
+        
+        .cadeia-node h4 {
+            font-size: 1rem;
+            color: var(--grafite);
+            margin-bottom: 0.3rem;
+        }
+        
+        .cadeia-node p {
+            font-size: 0.8rem;
+            color: var(--cinza);
+        }
+        
+        .cadeia-arrow {
+            flex: 0 0 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dourado);
+            font-size: 1.5rem;
+        }
+        
+        .cadeia-connector {
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            right: 10%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--verde) 0%, var(--dourado) 50%, var(--verde) 100%);
+            z-index: 1;
+            opacity: 0.3;
+        }
+        /* EMPRESAS ÂNCORA */
+        
+        .empresa-card {
+            background: var(--branco);
+            border: var(--borda);
+            border-radius: 10px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .empresa-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--verde), var(--dourado));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s;
+        }
+        
+        .empresa-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--sombra-hover);
+        }
+        
+        .empresa-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .empresa-logo {
+            width: 56px;
+            height: 56px;
+            background: var(--creme);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+            color: var(--verde);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .empresa-nome {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--grafite);
+            margin-bottom: 0.3rem;
+        }
+        
+        .empresa-setor {
+            font-size: 0.75rem;
+            color: var(--cinza);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+        }
+        
+        .empresa-tags {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        
+        .tag {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.6rem;
+            border-radius: 10px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+        
+        .tag-b2b {
+            background: rgba(0, 107, 63, 0.12);
+            color: var(--verde);
+        }
+        
+        .tag-b2c {
+            background: rgba(201, 162, 39, 0.15);
+            color: #8B6914;
+        }
+        
+        .tag-b2g {
+            background: rgba(0, 39, 118, 0.12);
+            color: var(--azul);
+        }
+        
+        .empresa-meta {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 1rem;
+            border-top: 1px solid var(--cinza-claro);
+            font-size: 0.8rem;
+            color: var(--cinza);
+        }
+        
+        .empresa-meta strong {
+            color: var(--grafite);
+            font-weight: 600;
+        }
+        /* FORMS */
+        
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+        
+        label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--cinza);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+        }
+        
+        input,
+        select,
+        textarea {
+            width: 100%;
+            background: var(--marfim);
+            border: 1px solid var(--cinza-claro);
+            color: var(--grafite);
+            padding: 0.85rem 1rem;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+        }
+        
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--verde);
+            background: var(--branco);
+            box-shadow: 0 0 0 3px var(--verde-suave);
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        /* BUTTONS */
+        
+        .btn {
+            padding: 0.85rem 1.8rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.25s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            letter-spacing: 0.02em;
+        }
+        
+        .btn-primary {
+            background: var(--verde);
+            color: var(--branco);
+        }
+        
+        .btn-primary:hover {
+            background: #004D2E;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 107, 63, 0.3);
+        }
+        
+        .btn-gold {
+            background: var(--dourado);
+            color: var(--grafite);
+        }
+        
+        .btn-gold:hover {
+            background: #A8861E;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: var(--verde);
+            border: 1px solid var(--verde);
+        }
+        
+        .btn-outline:hover {
+            background: var(--verde-suave);
+        }
+        /* TABLES */
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            text-align: left;
+            padding: 1rem;
+            font-size: 0.75rem;
+            color: var(--cinza);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 600;
+            border-bottom: 2px solid var(--cinza-claro);
+            background: var(--creme);
+        }
+        
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--cinza-claro);
+            font-size: 0.9rem;
+        }
+        
+        tr:hover td {
+            background: var(--marfim);
+        }
+        /* BADGES */
+        
+        .badge {
+            display: inline-block;
+            padding: 0.3rem 0.7rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .badge-success {
+            background: var(--verde-suave);
+            color: var(--verde);
+        }
+        
+        .badge-warning {
+            background: rgba(201, 162, 39, 0.15);
+            color: #8B6914;
+        }
+        
+        .badge-danger {
+            background: rgba(192, 57, 43, 0.12);
+            color: #C0392B;
+        }
+        
+        .badge-info {
+            background: rgba(0, 39, 118, 0.1);
+            color: var(--azul);
+        }
+        /* SECTION HEADER */
+        
+        .section-header {
+            margin-bottom: 2.5rem;
+        }
+        
+        .section-header .eyebrow {
+            font-size: 0.75rem;
+            color: var(--dourado);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .section-header h2 {
+            font-size: 2.2rem;
+            color: var(--verde);
+            margin-bottom: 0.5rem;
+        }
+        
+        .section-header p {
+            color: var(--cinza);
+            font-size: 1rem;
+            max-width: 700px;
+        }
+        /* DIVIDER SOBERANO */
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 3rem 0 2rem;
+        }
+        
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--cinza-claro), transparent);
+        }
+        
+        .divider span {
+            font-family: 'Playfair Display', serif;
+            font-size: 0.9rem;
+            color: var(--dourado);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        /* ALERTS */
+        
+        .alert {
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid;
+            font-size: 0.9rem;
+        }
+        
+        .alert-sovereign {
+            background: linear-gradient(90deg, var(--verde-suave), transparent);
+            border-color: var(--verde);
+            color: var(--verde);
+        }
+        
+        .alert-gold {
+            background: linear-gradient(90deg, rgba(201, 162, 39, 0.1), transparent);
+            border-color: var(--dourado);
+            color: #8B6914;
+        }
+        
+        .alert-danger {
+            background: linear-gradient(90deg, rgba(192, 57, 43, 0.08), transparent);
+            border-color: #C0392B;
+            color: #8B2D1F;
+        }
+        /* FLOW CARDS (B2B/B2C/B2G) */
+        
+        .flow-card {
+            background: var(--branco);
+            border-radius: 10px;
+            padding: 2rem;
+            border: var(--borda);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .flow-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+        }
+        
+        .flow-b2b::before {
+            background: var(--verde);
+        }
+        
+        .flow-b2c::before {
+            background: var(--dourado);
+        }
+        
+        .flow-b2g::before {
+            background: var(--azul);
+        }
+        
+        .flow-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.2rem;
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+            font-size: 1.2rem;
+        }
+        
+        .flow-b2b .flow-icon {
+            background: var(--verde-suave);
+            color: var(--verde);
+        }
+        
+        .flow-b2c .flow-icon {
+            background: rgba(201, 162, 39, 0.15);
+            color: var(--dourado);
+        }
+        
+        .flow-b2g .flow-icon {
+            background: rgba(0, 39, 118, 0.1);
+            color: var(--azul);
+        }
+        
+        .flow-card h3 {
+            font-size: 1.4rem;
+            color: var(--grafite);
+            margin-bottom: 0.5rem;
+        }
+        
+        .flow-card p {
+            color: var(--cinza);
+            font-size: 0.9rem;
+            margin-bottom: 1.2rem;
+        }
+        
+        .flow-list {
+            list-style: none;
+        }
+        
+        .flow-list li {
+            padding: 0.5rem 0;
+            font-size: 0.88rem;
+            color: var(--grafite);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            border-bottom: 1px dashed var(--cinza-claro);
+        }
+        
+        .flow-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .flow-list li::before {
+            content: '→';
+            color: var(--dourado);
+            font-weight: bold;
+        }
+        /* DOCUMENTAÇÃO */
+        
+        .doc-block {
+            background: var(--branco);
+            border: var(--borda);
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .doc-block h4 {
+            font-size: 1.2rem;
+            color: var(--verde);
+            margin-bottom: 1rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid var(--cinza-claro);
+        }
+        
+        .doc-block p {
+            margin-bottom: 1rem;
+            color: var(--grafite);
+        }
+        
+        .doc-block ul {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .doc-block li {
+            margin-bottom: 0.5rem;
+            color: var(--grafite);
+        }
+        
+        pre {
+            background: var(--grafite);
+            color: var(--dourado-claro);
+            padding: 1.2rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 0.82rem;
+            font-family: 'Courier New', monospace;
+            border-left: 3px solid var(--dourado);
+        }
+        /* RESPONSIVO */
+        
+        @media (max-width: 1024px) {
+            .grid-4 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .grid-3 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .hero-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+                padding: 1rem 0.5rem;
+            }
+            .brand-text,
+            .nav-section,
+            .nav-item span {
+                display: none;
+            }
+            .main {
+                margin-left: 70px;
+            }
+            .content {
+                padding: 1.5rem;
+            }
+            .hero {
+                padding: 2rem 1.5rem;
+            }
+            .hero h1 {
+                font-size: 2rem;
+            }
+            .grid-2,
+            .grid-3,
+            .grid-4 {
+                grid-template-columns: 1fr;
+            }
+            .cadeia-flow {
+                flex-direction: column;
+            }
+            .cadeia-arrow {
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-seal">SX</div>
+            <div class="brand-text">
+                <h1>SICX</h1>
+                <span>República Federativa</span>
+            </div>
+        </div>
+
+        <div class="nav-section">Principal</div>
+        <div class="nav-item active" data-section="dashboard">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <span>Visão Soberana</span>
+        </div>
+        <div class="nav-item" data-section="cadeia">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="19" cy="12" r="2"/><circle cx="12" cy="5" r="2"/><circle cx="12" cy="19" r="2"/><path d="M7 12h10M12 7v10"/></svg>
+            <span>Cadeia de Produção</span>
+        </div>
+        <div class="nav-item" data-section="ancoras">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h1M14 9h1M9 13h1M14 13h1M9 17h1M14 17h1"/></svg>
+            <span>Empresas Âncora</span>
+        </div>
+
+        <div class="nav-section">Operações</div>
+        <div class="nav-item" data-section="b2b">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span>B2B — Indústria</span>
+        </div>
+        <div class="nav-item" data-section="b2c">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+            <span>B2C — Varejo</span>
+        </div>
+        <div class="nav-item" data-section="b2g">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6"/></svg>
+            <span>B2G — Governo</span>
+        </div>
+        <div class="nav-item" data-section="catalogo">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            <span>Catálogo Nacional</span>
+        </div>
+
+        <div class="nav-section">Sistema</div>
+        <div class="nav-item" data-section="internacional">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            <span>Comércio Exterior</span>
+        </div>
+        <div class="nav-item" data-section="redflag">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1zM4 22v-7"/></svg>
+            <span>RedFlag</span>
+        </div>
+        <div class="nav-item" data-section="docs">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+            <span>Documentação</span>
+        </div>
+    </aside>
+
+    <main class="main">
+        <div class="topbar">
+            <div class="breadcrumb">SICX / <strong id="breadcrumb">Visão Soberana</strong></div>
+            <div class="topbar-actions">
+                <div class="status-pill">
+                    <div class="status-dot"></div>Enlace Criptografado Ativo</div>
+                <div class="user-chip">
+                    <div class="user-avatar">KS</div>
+                    <span>Kauê Caires</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+
+            <!-- DASHBOARD -->
+            <section class="section active" id="dashboard">
+                <div class="hero">
+                    <div class="hero-tag">◆ República Federativa do Brasil — Nov/2026</div>
+                    <h1>A cadeia produtiva nacional, unificada em uma só plataforma soberana.</h1>
+                    <p>SICX integra fornecedores, indústrias, varejo, governo e consumidores finais em um ecossistema único — com tributação CBS/IBS, segurança RedFlag e rastreabilidade ponta a ponta.</p>
+                    <div class="hero-stats">
+                        <div>
+                            <div class="hero-stat-value">1.247</div>
+                            <div class="hero-stat-label">Empresas Integradas</div>
+                        </div>
+                        <div>
+                            <div class="hero-stat-value">R$ 8,4B</div>
+                            <div class="hero-stat-label">Volume Mensal</div>
+                        </div>
+                        <div>
+                            <div class="hero-stat-value">27</div>
+                            <div class="hero-stat-label">UFs Conectadas</div>
+                        </div>
+                        <div>
+                            <div class="hero-stat-value">99,97%</div>
+                            <div class="hero-stat-label">Uptime Soberano</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-4">
+                    <div class="kpi">
+                        <div class="kpi-label">Transações B2B</div>
+                        <div class="kpi-value">4.821</div>
+                        <div class="kpi-trend">↑ 12,4% este mês</div>
+                    </div>
+                    <div class="kpi" style="border-left-color: var(--dourado);">
+                        <div class="kpi-label">Vendas B2C</div>
+                        <div class="kpi-value">18.340</div>
+                        <div class="kpi-trend">↑ 8,7% este mês</div>
+                    </div>
+                    <div class="kpi" style="border-left-color: var(--azul);">
+                        <div class="kpi-label">Contratos B2G</div>
+                        <div class="kpi-value">347</div>
+                        <div class="kpi-trend">↑ 3,2% este mês</div>
+                    </div>
+                    <div class="kpi">
+                        <div class="kpi-label">Alertas RedFlag</div>
+                        <div class="kpi-value">12</div>
+                        <div class="kpi-trend down">↓ 24% vs. mês anterior</div>
+                    </div>
+                </div>
+
+                <div class="divider"><span>Fluxos Ativos</span></div>
+
+                <div class="grid-3">
+                    <div class="flow-card flow-b2b">
+                        <div class="flow-icon">B2B</div>
+                        <h3>Indústria → Indústria</h3>
+                        <p>Bosch fornece componentes para WEG, que equipa motores para embarcações da Estaleiro Atlântico Sul.</p>
+                        <ul class="flow-list">
+                            <li>Contratos de fornecimento contínuo</li>
+                            <li>Preços negociados por volume</li>
+                            <li>CBS/IBS com crédito integral</li>
+                        </ul>
+                    </div>
+                    <div class="flow-card flow-b2c">
+                        <div class="flow-icon">B2C</div>
+                        <h3>Indústria → Consumidor</h3>
+                        <p>Produtos finais chegam ao cidadão brasileiro via varejistas credenciados, com nota fiscal eletrônica unificada.</p>
+                        <ul class="flow-list">
+                            <li>Varejo físico e digital integrado</li>
+                            <li>Rastreabilidade do produto</li>
+                            <li>Defesa do consumidor ativa</li>
+                        </ul>
+                    </div>
+                    <div class="flow-card flow-b2g">
+                        <div class="flow-icon">B2G</div>
+                        <h3>Indústria → Governo</h3>
+                        <p>Fornecimento direto para órgãos públicos via catálogo permanente — sem pregão individual.</p>
+                        <ul class="flow-list">
+                            <li>ETP e segregação de funções</li>
+                            <li>Ranking automatizado</li>
+                            <li>Pagamento em até 30 dias</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CADEIA DE PRODUÇÃO -->
+            <section class="section" id="cadeia">
+                <div class="section-header">
+                    <div class="eyebrow">◆ Ecossistema Integrado</div>
+                    <h2>Cadeia de Produção Nacional</h2>
+                    <p>Cada elo conectado ao próximo — da matéria-prima ao cidadão. Rastreabilidade, contratos inteligentes e tributação em tempo real.</p>
+                </div>
+
+                <div class="cadeia-visual">
+                    <div class="cadeia-title">
+                        <h2>Do Minério ao Cidadão</h2>
+                        <p>Fluxo contínuo com contratos B2B entre elos e tributação CBS/IBS em cada transação</p>
+                    </div>
+                    <div class="cadeia-connector"></div>
+                    <div class="cadeia-flow">
+                        <div class="cadeia-node">
+                            <div class="cadeia-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 22l10-20 10 20H2z"/></svg>
+                            </div>
+                            <h4>Matéria-Prima</h4>
+                            <p>Vale, CSN, Petrobras</p>
+                        </div>
+                        <div class="cadeia-arrow">→</div>
+                        <div class="cadeia-node">
+                            <div class="cadeia-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 20h20M5 20V8l7-5 7 5v12M9 20v-6h6v6"/></svg>
+                            </div>
+                            <h4>Indústria</h4>
+                            <p>Bosch, WEG, Embraer</p>
+                        </div>
+                        <div class="cadeia-arrow">→</div>
+                        <div class="cadeia-node">
+                            <div class="cadeia-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+                            </div>
+                            <h4>Distribuição</h4>
+                            <p>Transportadoras, CD's</p>
+                        </div>
+                        <div class="cadeia-arrow">→</div>
+                        <div class="cadeia-node">
+                            <div class="cadeia-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                            </div>
+                            <h4>Varejo</h4>
+                            <p>Magalu, Casas Bahia</p>
+                        </div>
+                        <div class="cadeia-arrow">→</div>
+                        <div class="cadeia-node">
+                            <div class="cadeia-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            </div>
+                            <h4>Cidadão</h4>
+                            <p>Consumidor final</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3 class="card-title">Contratos Inteligentes</h3>
+                                <div class="card-subtitle">Vínculos automáticos entre elos</div>
+                            </div>
+                            <span class="card-badge gold">Ativo</span>
+                        </div>
+                        <p style="color: var(--cinza); font-size: 0.9rem; margin-bottom: 1rem;">Cada transação entre elos gera um contrato digital com CBS/IBS calculados em tempo real, rastreabilidade do produto e cláusulas de conformidade.</p>
+                        <ul class="flow-list">
+                            <li>Assinatura criptográfica mTLS</li>
+                            <li>Cláusulas de entrega e qualidade</li>
+                            <li>Liquidação automática em D+30</li>
+                            <li>Auditoria RedFlag integrada</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3 class="card-title">Rastreabilidade Ponta a Ponta</h3>
+                                <div class="card-subtitle">Cada produto, cada etapa</div>
+                            </div>
+                            <span class="card-badge">Blockchain Nacional</span>
+                        </div>
+                        <p style="color: var(--cinza); font-size: 0.9rem; margin-bottom: 1rem;">Do minério de ferro da Vale ao carro da Volkswagen — cada etapa registrada com hash criptográfico e carimbo de tempo.</p>
+                        <ul class="flow-list">
+                            <li>Hash único por lote produzido</li>
+                            <li>Carimbo de tempo ICP-Brasil</li>
+                            <li>Consulta pública pelo cidadão</li>
+                            <li>Integração com Receita Federal</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- EMPRESAS ÂNCORA -->
+            <section class="section" id="ancoras">
+                <div class="section-header">
+                    <div class="eyebrow">◆ Gigantes Nacionais</div>
+                    <h2>Empresas Âncora da Cadeia</h2>
+                    <p>Indústrias brasileiras conectando toda a cadeia — da extração ao consumo — com operações B2B, B2C e B2G integradas.</p>
+                </div>
+
+                <div class="grid-3" id="empresasGrid"></div>
+
+                <div class="divider"><span>Integração Vertical</span></div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 class="card-title">Exemplo: Cadeia Bosch → Varejo → Cidadão</h3>
+                            <div class="card-subtitle">Fluxo B2B → B2C com tributação em cada etapa</div>
+                        </div>
+                        <span class="card-badge blue">Cadeia Integrada</span>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Elo</th>
+                                <th>Empresa</th>
+                                <th>Operação</th>
+                                <th>Valor</th>
+                                <th>CBS</th>
+                                <th>IBS</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Matéria-prima</td>
+                                <td>Usiminas</td>
+                                <td>Aço → Bosch</td>
+                                <td>R$ 1.000</td>
+                                <td>R$ 120</td>
+                                <td>R$ 170</td>
+                                <td>R$ 1.290</td>
+                            </tr>
+                            <tr>
+                                <td>Indústria</td>
+                                <td>Bosch</td>
+                                <td>Componente → Magalu</td>
+                                <td>R$ 2.500</td>
+                                <td>R$ 300</td>
+                                <td>R$ 425</td>
+                                <td>R$ 3.225</td>
+                            </tr>
+                            <tr>
+                                <td>Varejo</td>
+                                <td>Magalu</td>
+                                <td>Produto final → Cidadão</td>
+                                <td>R$ 3.800</td>
+                                <td>R$ 456</td>
+                                <td>R$ 646</td>
+                                <td>R$ 4.902</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- B2B -->
+            <section class="section" id="b2b">
+                <div class="section-header">
+                    <div class="eyebrow">◆ Business to Business</div>
+                    <h2>Operações Interindustriais</h2>
+                    <p>Contratos de fornecimento contínuo entre empresas da cadeia — com crédito integral de CBS/IBS e liquidação automatizada.</p>
+                </div>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3 class="card-title">Nova Ordem B2B</h3>
+                                <div class="card-subtitle">Entre empresas da cadeia nacional</div>
+                            </div>
+                        </div>
+                        <form id="formB2B">
+                            <div class="form-group">
+                                <label>Fornecedor Âncora</label>
+                                <select id="b2b_forn" required>
+                                    <option value="">Selecione o fornecedor</option>
+                                    <option value="bosch">Robert Bosch Brasil</option>
+                                    <option value="weg">WEG Motores</option>
+                                    <option value="vale">Vale S.A.</option>
+                                    <option value="usiminas">Usiminas</option>
+                                    <option value="petrobras">Petrobras</option>
+                                    <option value="embrayer">Embraer</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Empresa Compradora</label>
+                                <input type="text" id="b2b_comp" placeholder="CNPJ ou razão social" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Produto / Componente</label>
+                                <input type="text" id="b2b_prod" placeholder="Ex: Módulo de injeção eletrônica" required>
+                            </div>
+                            <div class="grid-2">
+                                <div class="form-group">
+                                    <label>Quantidade</label>
+                                    <input type="number" id="b2b_qtd" min="1" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Valor Unitário (R$)</label>
+                                    <input type="number" id="b2b_val" step="0.01" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Emitir Contrato B2B</button>
+                        </form>
+                        <div id="b2b_result" style="margin-top:1.5rem;"></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3 class="card-title">Contratos Ativos</h3>
+                                <div class="card-subtitle">Últimos vínculos interindustriais</div>
+                            </div>
+                            <span class="card-badge">247 ativos</span>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Contrato</th>
+                                    <th>De → Para</th>
+                                    <th>Valor</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>#B2B-8471</td>
+                                    <td>Bosch → Volkswagen</td>
+                                    <td>R$ 2.4M</td>
+                                    <td><span class="badge badge-success">Em produção</span></td>
+                                </tr>
+                                <tr>
+                                    <td>#B2B-8470</td>
+                                    <td>Vale → Gerdau</td>
+                                    <td>R$ 8.1M</td>
+                                    <td><span class="badge badge-success">Entregue</span></td>
+                                </tr>
+                                <tr>
+                                    <td>#B2B-8469</td>
+                                    <td>WEG → EAS</td>
+                                    <td>R$ 5.7M</td>
+                                    <td><span class="badge badge-warning">Em trânsito</span></td>
+                                </tr>
+                                <tr>
+                                    <td>#B2B-8468</td>
+                                    <td>Usiminas → Embraer</td>
+                                    <td>R$ 3.2M</td>
+                                    <td><span class="badge badge-success">Em produção</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- B2C -->
+            <section class="section" id="b2c">
+                <div class="section-header">
+                    <div class="eyebrow">◆ Business to Consumer</div>
+                    <h2>Varejo Integrado ao Cidadão</h2>
+                    <p>Produtos finais da indústria nacional disponíveis em vitrine unificada — com nota fiscal eletrônica, rastreabilidade e defesa do consumidor.</p>
+                </div>
+
+                <div class="alert alert-gold">
+                    <strong>◆ Vitrine Nacional:</strong> Produtos de todas as empresas âncora disponíveis em um só marketplace soberano, com CBS/IBS destacados e crédito tributário automaticamente repassado.
+                </div>
+
+                <div class="grid-3" id="vitrineGrid"></div>
+
+                <div class="card" style="margin-top:2rem;">
+                    <div class="card-header">
+                        <div>
+                            <h3 class="card-title">Rastreabilidade do Produto</h3>
+                            <div class="card-subtitle">Consulte a jornada de qualquer item</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Código do Produto (hash único)</label>
+                        <input type="text" id="rastreio" placeholder="Ex: BR-BOSCH-2026-A8F3C9">
+                    </div>
+                    <button class="btn btn-outline" onclick="rastrear()">Rastrear Produto</button>
+                    <div id="rastreioResult" style="margin-top:1.5rem;"></div>
+                </div>
+            </section>
+
+            <!-- B2G -->
+            <section class="section" id="b2g">
+                <div class="section-header">
+                    <div class="eyebrow">◆ Business to Government</div>
+                    <h2>Fornecimento ao Estado</h2>
+                    <p>Catálogo permanente para órgãos públicos — sem pregão individual. ETP, ranking automatizado e segregação de funções.</p>
+                </div>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3 class="card-title">Órgão Comprador</h3>
+                                <div class="card-subtitle">Fluxo em 5 etapas</div>
+                            </div>
+                            <span class="card-badge blue">Federal</span>
+                        </div>
+                        <form id="formB2G">
+                            <div class="form-group">
+                                <label>Órgão</label>
+                                <select required>
+                                    <option>Prefeitura de São Paulo</option>
+                                    <option>Governo do Estado de SP</option>
+                                    <option>INSS — Autarquia Federal</option>
+                                    <option>Ministério da Gestão (MGI)</option>
+                                    <option>Consórcio Intermunicipal</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Estudo Técnico Preliminar (ETP)</label>
+                                <textarea placeholder="Descreva a necessidade e justificativa..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Categoria de Produto</label>
+                                <select>
+                                    <option>Informática e TI</option>
+                                    <option>Materiais de Escritório</option>
+                                    <option>Veículos Oficiais</option>
+                                    <option>Equipamentos Médicos</option>
+                                    <option>Material de Limpeza</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Lançar Demanda B2G</button>
+                        </form>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3 class="card-title">Fornecedores Ranqueados</h3>
+                                <div class="card-subtitle">Ordenação automática por vantajosidade</div>
+                            </div>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Empresa</th>
+                                    <th>Preço</th>
+                                    <th>Prazo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong style="color:var(--dourado);">1º</strong></td>
+                                    <td>Dell Computadores</td>
+                                    <td>R$ 4.280</td>
+                                    <td>3 dias</td>
+                                </tr>
+                                <tr>
+                                    <td>2º</td>
+                                    <td>Lenovo Brasil</td>
+                                    <td>R$ 4.450</td>
+                                    <td>5 dias</td>
+                                </tr>
+                                <tr>
+                                    <td>3º</td>
+                                    <td>Positivo Tecnologia</td>
+                                    <td>R$ 4.520</td>
+                                    <td>7 dias</td>
+                                </tr>
+                                <tr>
+                                    <td>4º</td>
+                                    <td>HP Brasil</td>
+                                    <td>R$ 4.690</td>
+                                    <td>4 dias</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="alert alert-sovereign" style="margin-top:1.5rem; font-size:0.85rem;">
+                            <strong>⚖️ Segregação:</strong> Servidor distinto do que elaborou o pedido deve confirmar a aquisição.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CATÁLOGO -->
+            <section class="section" id="catalogo">
+                <div class="section-header">
+                    <div class="eyebrow">◆ Catálogo Permanente</div>
+                    <h2>Produtos da Cadeia Nacional</h2>
+                    <p>Todos os itens disponíveis para B2B, B2C e B2G — com CBS/IBS destacados e rastreabilidade integrada.</p>
+                </div>
+
+                <div class="grid-4" id="catalogoGrid"></div>
+            </section>
+
+            <!-- INTERNACIONAL -->
+            <section class="section" id="internacional">
+                <div class="section-header">
+                    <div class="eyebrow">◆ Comércio Exterior</div>
+                    <h2>Operações Internacionais</h2>
+                    <p>Requisições de peças, minérios e produtos entre países parceiros — com tributação CBS/IBS e taxas diferenciadas por bloco.</p>
+                </div>
+
+                <div class="card">
+                    <form id="formInt">
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label>Tipo de Item</label>
+                                <select id="int_tipo" required>
+                                    <option value="peca">Peças Industriais</option>
+                                    <option value="minerio">Minérios</option>
+                                    <option value="tecnologia">Componentes Tecnológicos</option>
+                                    <option value="agro">Produtos Agrícolas</option>
+                                    <option value="energia">Energia e Combustíveis</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>ID do Item</label>
+                                <input type="text" id="int_id" placeholder="MIN-Fe-2026" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Quantidade</label>
+                                <input type="number" id="int_qtd" min="1" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Valor Unitário (USD)</label>
+                                <input type="number" id="int_val" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label>País de Origem</label>
+                                <select id="int_orig" required>
+                                    <optgroup label="Mercosul (0%)">
+                                        <option value="AR">Argentina</option><option value="PY">Paraguai</option>
+                                        <option value="UY">Uruguai</option><option value="BO">Bolívia</option>
+                                    </optgroup>
+                                    <optgroup label="BRICS + CPLP (10%)">
+                                        <option value="CN">China</option><option value="RU">Rússia</option>
+                                        <option value="IN">Índia</option><option value="ZA">África do Sul</option>
+                                        <option value="PT">Portugal</option><option value="AO">Angola</option>
+                                    </optgroup>
+                                    <optgroup label="Demais Parceiros (20%)">
+                                        <option value="US">EUA</option><option value="DE">Alemanha</option>
+                                        <option value="JP">Japão</option><option value="KR">Coreia do Sul</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>País de Destino</label>
+                                <select id="int_dest" required>
+                                    <option value="BR">Brasil</option><option value="AR">Argentina</option>
+                                    <option value="CN">China</option><option value="US">EUA</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Processar Requisição Internacional</button>
+                    </form>
+                    <div id="int_result" style="margin-top:1.5rem;"></div>
+                </div>
+            </section>
+
+            <!-- REDFLAG -->
+            <section class="section" id="redflag">
+                <div class="section-header">
+                    <div class="eyebrow">◆ Segurança Soberana</div>
+                    <h2>Painel RedFlag</h2>
+                    <p>Sistema de sinalização de risco imediato — append-only, com aprovação humana obrigatória para qualquer ação de contenção.</p>
+                </div>
+
+                <div class="grid-4">
+                    <div class="kpi" style="border-left-color:#C0392B;">
+                        <div class="kpi-label">Críticos</div>
+                        <div class="kpi-value" style="color:#C0392B;">3</div>
+                    </div>
+                    <div class="kpi" style="border-left-color:var(--dourado);">
+                        <div class="kpi-label">Altos</div>
+                        <div class="kpi-value" style="color:#8B6914;">7</div>
+                    </div>
+                    <div class="kpi">
+                        <div class="kpi-label">Médios</div>
+                        <div class="kpi-value">12</div>
+                    </div>
+                    <div class="kpi" style="border-left-color:var(--verde);">
+                        <div class="kpi-label">Resolvidos Hoje</div>
+                        <div class="kpi-value" style="color:var(--verde);">4</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 class="card-title">Alertas Ativos</h3>
+                            <div class="card-subtitle">Aguardando aprovação humana</div>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>RedFlag</th>
+                                <th>Severidade</th>
+                                <th>Origem</th>
+                                <th>SLA</th>
+                                <th>Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>RF-2847</td>
+                                <td>RF-ECO-01</td>
+                                <td><span class="badge badge-danger">Alta</span></td>
+                                <td>Requisição R$ 1.2M (China→BR)</td>
+                                <td>1h</td>
+                                <td><button class="btn btn-outline" style="padding:0.4rem 1rem; font-size:0.8rem;">Playbook PB-03</button></td>
+                            </tr>
+                            <tr>
+                                <td>RF-2846</td>
+                                <td>RF-NET-01</td>
+                                <td><span class="badge badge-danger">Crítica</span></td>
+                                <td>Acesso não autorizado porta 22</td>
+                                <td>15min</td>
+                                <td><button class="btn btn-outline" style="padding:0.4rem 1rem; font-size:0.8rem;">Playbook PB-01</button></td>
+                            </tr>
+                            <tr>
+                                <td>RF-2845</td>
+                                <td>RF-ECO-02</td>
+                                <td><span class="badge badge-warning">Média</span></td>
+                                <td>Volume incomum (8.500 un.)</td>
+                                <td>4h</td>
+                                <td><button class="btn btn-outline" style="padding:0.4rem 1rem; font-size:0.8rem;">Playbook PB-02</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- DOCS -->
+            <section class="section" id="docs">
+                <div class="section-header">
+                    <div class="eyebrow">◆ Documentação Oficial</div>
+                    <h2>Manual Técnico SICX v1.0</h2>
+                    <p>Conforme anúncio do MGI na Semana de Inovação (Novembro/2026). Operação plena prevista para 1º semestre de 2027.</p>
+                </div>
+
+                <div class="doc-block">
+                    <h4>1. Cadeia de Produção Integrada</h4>
+                    <p>O SICX conecta todos os elos da cadeia produtiva nacional em uma única plataforma soberana, permitindo operações <strong>B2B</strong> (entre indústrias), <strong>B2C</strong> (varejo ao cidadão) e <strong>B2G</strong> (fornecimento
+                        ao governo) com tributação CBS/IBS em cada transação.</p>
+                    <ul>
+                        <li>Contratos inteligentes entre elos com assinatura mTLS</li>
+                        <li>Rastreabilidade ponta a ponta via blockchain nacional</li>
+                        <li>CBS (12% federal) + IBS (17% subnacional) calculados automaticamente</li>
+                        <li>Crédito tributário integral entre empresas da cadeia</li>
+                    </ul>
+                </div>
+
+                <div class="doc-block">
+                    <h4>2. Empresas Âncora</h4>
+                    <p>Indústrias brasileiras de grande porte atuam como âncoras da cadeia, conectando fornecedores de matéria-prima, distribuidores, varejistas e o cidadão final.</p>
+                    <ul>
+                        <li><strong>Mineração:</strong> Vale, CSN, Anglo American</li>
+                        <li><strong>Automotivo/Indústria:</strong> Bosch, WEG, Embraer</li>
+                        <li><strong>Energia:</strong> Petrobras, Eletrobras</li>
+                        <li><strong>Siderurgia:</strong> Gerdau, Usiminas, ArcelorMittal</li>
+                        <li><strong>Agro:</strong> JBS, BRF, Cargill, Amaggi</li>
+                        <li><strong>Tecnologia:</strong> Positivo, Intel, Samsung</li>
+                    </ul>
+                </div>
+
+                <div class="doc-block">
+                    <h4>3. API de Integração</h4>
+                    <pre>
+# Contratos B2B
+POST /api/b2b/contrato
+{
+  "fornecedor": "bosch",
+  "comprador": "cnpj_00000000000100",
+  "produto": "modulo_injecao_v8",
+  "quantidade": 5000,
+  "valorUnitario": 480.00
+}
+
+# Rastreabilidade
+GET /api/rastreio/{hash_produto}
+
+# Vitrine B2C
+GET /api/vitrine?categoria=automotivo
+
+# Demanda B2G
+POST /api/b2g/demanda
+{
+  "orgao": "prefeitura_sp",
+  "etp": "ETP-2026-0847",
+  "categoria": "informatica"
+}
+                    </pre>
+                </div>
+
+                <div class="doc-block">
+                    <h4>4. Tributação — Reforma (CBS/IBS)</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tributo</th>
+                                <th>Alíquota</th>
+                                <th>Competência</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>CBS</td>
+                                <td>12%</td>
+                                <td>Federal</td>
+                            </tr>
+                            <tr>
+                                <td>IBS</td>
+                                <td>17%</td>
+                                <td>Estados e Municípios</td>
+                            </tr>
+                            <tr>
+                                <td>Imp. Importação Mercosul</td>
+                                <td>0%</td>
+                                <td>Federal</td>
+                            </tr>
+                            <tr>
+                                <td>Imp. Importação BRICS/CPLP</td>
+                                <td>10%</td>
+                                <td>Federal</td>
+                            </tr>
+                            <tr>
+                                <td>Imp. Importação Demais</td>
+                                <td>20%</td>
+                                <td>Federal</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <script>
+        // NAVEGAÇÃO
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                item.classList.add('active');
+                const section = item.dataset.section;
+                document.getElementById(section).classList.add('active');
+                const titles = {
+                    dashboard: 'Visão Soberana',
+                    cadeia: 'Cadeia de Produção',
+                    ancoras: 'Empresas Âncora',
+                    b2b: 'Operações B2B',
+                    b2c: 'Varejo B2C',
+                    b2g: 'Fornecimento B2G',
+                    catalogo: 'Catálogo Nacional',
+                    internacional: 'Comércio Exterior',
+                    redflag: 'Painel RedFlag',
+                    docs: 'Documentação'
+                };
+                document.getElementById('breadcrumb').textContent = titles[section];
+            });
+        });
+
+        // EMPRESAS ÂNCORA
+        const empresas = [{
+            logo: 'B',
+            nome: 'Robert Bosch Brasil',
+            setor: 'Automotivo & Indústria',
+            tags: ['b2b', 'b2c', 'b2g'],
+            cnpj: '44.550.667/0001-05',
+            volume: 'R$ 12,4B'
+        }, {
+            logo: 'W',
+            nome: 'WEG Motores',
+            setor: 'Motores & Automação',
+            tags: ['b2b', 'b2g'],
+            cnpj: '84.429.695/0001-05',
+            volume: 'R$ 28,7B'
+        }, {
+            logo: 'V',
+            nome: 'Vale S.A.',
+            setor: 'Mineração',
+            tags: ['b2b'],
+            cnpj: '33.592.510/0001-54',
+            volume: 'R$ 198B'
+        }, {
+            logo: 'E',
+            nome: 'Embraer',
+            setor: 'Aeronáutica',
+            tags: ['b2b', 'b2g'],
+            cnpj: '07.309.000/0001-01',
+            volume: 'R$ 20,3B'
+        }, {
+            logo: 'P',
+            nome: 'Petrobras',
+            setor: 'Energia & Petróleo',
+            tags: ['b2b', 'b2c', 'b2g'],
+            cnpj: '33.000.167/0001-01',
+            volume: 'R$ 514B'
+        }, {
+            logo: 'U',
+            nome: 'Usiminas',
+            setor: 'Siderurgia',
+            tags: ['b2b'],
+            cnpj: '60.875.980/0001-20',
+            volume: 'R$ 28,9B'
+        }, {
+            logo: 'G',
+            nome: 'Gerdau S.A.',
+            setor: 'Aço Longo',
+            tags: ['b2b', 'b2g'],
+            cnpj: '07.296.559/0001-37',
+            volume: 'R$ 57,2B'
+        }, {
+            logo: 'J',
+            nome: 'JBS S.A.',
+            setor: 'Proteínas',
+            tags: ['b2b', 'b2c'],
+            cnpj: '02.914.265/0001-31',
+            volume: 'R$ 285B'
+        }, {
+            logo: 'A',
+            nome: 'Ambev',
+            setor: 'Bebidas',
+            tags: ['b2b', 'b2c'],
+            cnpj: '07.471.013/0001-00',
+            volume: 'R$ 82,4B'
+        }, {
+            logo: 'S',
+            nome: 'Suzano',
+            setor: 'Papel & Celulose',
+            tags: ['b2b'],
+            cnpj: '16.404.287/0001-87',
+            volume: 'R$ 38,1B'
+        }, {
+            logo: 'B',
+            nome: 'Braskem',
+            setor: 'Petroquímica',
+            tags: ['b2b'],
+            cnpj: '01.471.757/0001-07',
+            volume: 'R$ 56,8B'
+        }, {
+            logo: 'K',
+            nome: 'Kalunga',
+            setor: 'Materiais de Escritório',
+            tags: ['b2b', 'b2c', 'b2g'],
+            cnpj: '43.283.811/0001-50',
+            volume: 'R$ 3,2B'
+        }];
+
+        const grid = document.getElementById('empresasGrid');
+        grid.innerHTML = empresas.map(e => `
+            <div class="empresa-card">
+                <div class="empresa-logo">${e.logo}</div>
+                <div class="empresa-nome">${e.nome}</div>
+                <div class="empresa-setor">${e.setor}</div>
+                <div class="empresa-tags">
+                    ${e.tags.map(t => `<span class="tag tag-${t}">${t.toUpperCase()}</span>`).join('')}
+                </div>
+                <div class="empresa-meta">
+                    <span>CNPJ <strong>${e.cnpj}</strong></span>
+                    <span>Vol. <strong>${e.volume}</strong></span>
+                </div>
+            </div>
+        `).join('');
+
+        // VITRINE B2C
+        const vitrine = [
+            { nome: 'Furadeira Bosch GBM 13', preco: 'R$ 589,00', empresa: 'Bosch', cbs: 'R$ 70,68', ibs: 'R$ 100,13' },
+            { nome: 'Motor WEG W22 5CV', preco: 'R$ 2.480,00', empresa: 'WEG', cbs: 'R$ 297,60', ibs: 'R$ 421,60' },
+            { nome: 'Notebook Positivo Motion', preco: 'R$ 3.199,00', empresa: 'Positivo', cbs: 'R$ 383,88', ibs: 'R$ 543,83' },
+            { nome: 'Kit Limpeza Ypê', preco: 'R$ 89,90', empresa: 'Ypê', cbs: 'R$ 10,79', ibs: 'R$ 15,28' },
+            { nome: 'Papel A4 Tilibra (500fl)', preco: 'R$ 28,90', empresa: 'Tilibra', cbs: 'R$ 3,47', ibs: 'R$ 4,91' },
+            { nome: 'Cimento Votorantim 50kg', preco: 'R$ 42,50', empresa: 'Votorantim', cbs: 'R$ 5,10', ibs: 'R$ 7,23' }
+        ];
+        document.getElementById('vitrineGrid').innerHTML = vitrine.map(p => `
+            <div class="empresa-card">
+                <div class="empresa-nome">${p.nome}</div>
+                <div class="empresa-setor">${p.empresa}</div>
+                <div style="font-family:'Playfair Display',serif; font-size:1.6rem; color:var(--verde); font-weight:700; margin:1rem 0;">${p.preco}</div>
+                <div style="font-size:0.8rem; color:var(--cinza); line-height:1.8;">
+                    CBS (12%): ${p.cbs}<br>
+                    IBS (17%): ${p.ibs}
+                </div>
+                <button class="btn btn-outline" style="width:100%; margin-top:1rem; padding:0.6rem;">Adquirir</button>
+            </div>
+        `).join('');
+
+        // CATÁLOGO
+        const catalogo = [
+            { nome: 'Componentes Automotivos', qtd: 1247, empresas: 'Bosch, Magneti Marelli' },
+            { nome: 'Minério de Ferro', qtd: 89, empresas: 'Vale, CSN, Anglo American' },
+            { nome: 'Motores Elétricos', qtd: 342, empresas: 'WEG, Siemens' },
+            { nome: 'Aço Longo e Plano', qtd: 512, empresas: 'Gerdau, Usiminas, ArcelorMittal' },
+            { nome: 'Informática e TI', qtd: 2847, empresas: 'Dell, Lenovo, Positivo' },
+            { nome: 'Materiais de Escritório', qtd: 4120, empresas: 'Kalunga, Tilibra, Foroni' },
+            { nome: 'Produtos Agropecuários', qtd: 1890, empresas: 'JBS, BRF, Cargill' },
+            { nome: 'Papel e Celulose', qtd: 634, empresas: 'Suzano, Klabin, Eldorado' }
+        ];
+        document.getElementById('catalogoGrid').innerHTML = catalogo.map(c => `
+            <div class="kpi">
+                <div class="kpi-label">${c.nome}</div>
+                <div class="kpi-value" style="font-size:1.6rem;">${c.qtd.toLocaleString('pt-BR')}</div>
+                <div style="font-size:0.8rem; color:var(--cinza); margin-top:0.5rem;">${c.empresas}</div>
+            </div>
+        `).join('');
+
+        // FORM B2B
+        document.getElementById('formB2B').addEventListener('submit', e => {
+            e.preventDefault();
+            const qtd = parseInt(document.getElementById('b2b_qtd').value);
+            const val = parseFloat(document.getElementById('b2b_val').value);
+            const total = qtd * val;
+            const cbs = total * 0.12;
+            const ibs = total * 0.17;
+            const final = total + cbs + ibs;
+            document.getElementById('b2b_result').innerHTML = `
+                <div class="alert alert-sovereign">
+                    <strong>◆ Contrato B2B Emitido</strong><br>
+                    ID: #B2B-${Math.floor(Math.random()*9000+1000)}<br>
+                    Base: R$ ${total.toFixed(2)} | CBS: R$ ${cbs.toFixed(2)} | IBS: R$ ${ibs.toFixed(2)}<br>
+                    <strong>Total: R$ ${final.toFixed(2)}</strong><br>
+                    Liquidação automática em D+30. Rastreabilidade ativa.
+                </div>`;
+        });
+
+        // FORM B2G
+        document.getElementById('formB2G').addEventListener('submit', e => {
+            e.preventDefault();
+            alert('◆ Demanda B2G registrada. Ranking de fornecedores será gerado em até 24h. Lembre-se: servidor distinto deve confirmar a aquisição (segregação de funções).');
+        });
+
+        // FORM INTERNACIONAL
+        const MERCOSUL = ['AR','PY','UY','BO'];
+        const BRICS_CPLP = ['CN','RU','IN','ZA','PT','AO','CV','MZ','TL','EG','ET','IR','AE'];
+        document.getElementById('formInt').addEventListener('submit', e => {
+            e.preventDefault();
+            const qtd = parseInt(document.getElementById('int_qtd').value);
+            const val = parseFloat(document.getElementById('int_val').value);
+            const orig = document.getElementById('int_orig').value;
+            const total = qtd * val;
+            const cbs = total * 0.12;
+            const ibs = total * 0.17;
+            let aliquota = 0.20, nomeAliq = '20% (Demais)';
+            if (MERCOSUL.includes(orig)) { aliquota = 0; nomeAliq = '0% (Mercosul)'; }
+            else if (BRICS_CPLP.includes(orig)) { aliquota = 0.10; nomeAliq = '10% (BRICS/CPLP)'; }
+            const imp = total * aliquota;
+            const final = total + cbs + ibs + imp;
+            let redflag = '';
+            if (qtd > 10000 || total > 1000000) {
+                redflag = `<div class="alert alert-danger" style="margin-top:1rem;">🚩 RedFlag RF-ECO-01 acionada — aprovação humana obrigatória (Playbook PB-03, SLA 1h).</div>`;
+            }
+            document.getElementById('int_result').innerHTML = `
+                <div class="alert alert-sovereign">
+                    <strong>◆ Requisição Internacional Processada</strong><br>
+                    Base: US$ ${total.toFixed(2)}<br>
+                    CBS (12%): US$ ${cbs.toFixed(2)} | IBS (17%): US$ ${ibs.toFixed(2)}<br>
+                    Imp. Importação (${nomeAliq}): US$ ${imp.toFixed(2)}<br>
+                    <strong>Total: US$ ${final.toFixed(2)}</strong>
+                </div>${redflag}`;
+        });
+
+        // RASTREIO
+        function rastrear() {
+            const cod = document.getElementById('rastreio').value || 'BR-BOSCH-2026-A8F3C9';
+            document.getElementById('rastreioResult').innerHTML = `
+                <div class="alert alert-sovereign">
+                    <strong>Produto:</strong> Furadeira Bosch GBM 13<br>
+                    <strong>Hash:</strong> ${cod}<br>
+                    <strong>Jornada registrada:</strong>
+                    <ol style="margin:0.8rem 0 0 1.2rem; line-height:1.8;">
+                        <li><strong>Usiminas</strong> — Aço extraído em 12/10/2026</li>
+                        <li><strong>Bosch Manaus</strong> — Componente usinado em 28/10/2026</li>
+                        <li><strong>CD Magalu Cajamar</strong> — Recebido em 05/11/2026</li>
+                        <li><strong>Cidadão</strong> — Entrega prevista 22/11/2026</li>
+                    </ol>
+                    <em style="font-size:0.8rem;">Carimbo ICP-Brasil em cada etapa ✓</em>
+                </div>`;
+        }
+    </script>
+</body>
+
+</html>

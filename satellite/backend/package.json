@@ -1,0 +1,31 @@
+{
+  "name": "sicx-satellite-backend",
+  "version": "1.0.0",
+  "description": "Backend do Sistema de Rastreamento Satelital SICX",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "nodemon server/index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "ws": "^8.15.1",
+    "axios": "^1.6.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "compression": "^1.7.4",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "keywords": [
+    "sicx",
+    "satellite",
+    "tracking",
+    "ais",
+    "maritime"
+  ],
+  "author": "SICX Team",
+  "license": "MIT"
+}

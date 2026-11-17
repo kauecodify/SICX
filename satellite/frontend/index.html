@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SICX Satellite Tracking - Rastreamento Satelital Maritimo</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">SICX</div>
+                    <div class="logo-text">
+                        <span class="logo-title">Satellite Tracking System</span>
+                        <span class="logo-subtitle">Rastreamento Satelital Maritimo em Tempo Real</span>
+                    </div>
+                </div>
+                <nav class="nav">
+                    <a href="#" class="nav-link active" data-section="map">Mapa</a>
+                    <a href="#" class="nav-link" data-section="vessels">Embarcacoes</a>
+                    <a href="#" class="nav-link" data-section="ports">Portos</a>
+                    <a href="#" class="nav-link" data-section="alerts">Alertas</a>
+                    <a href="#" class="nav-link" data-section="dashboard">Painel</a>
+                </nav>
+                <div class="header-actions">
+                    <button class="btn btn-icon" id="refreshBtn" title="Atualizar">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M23 4v6h-6M1 20v-6h6"/>
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                        </svg>
+                    </button>
+                    <button class="btn btn-icon" id="settingsBtn" title="Configuracoes">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Map Section -->
+            <section id="map-section" class="section active">
+                <div class="map-container">
+                    <div id="map" class="map"></div>
+                    <div class="map-controls">
+                        <div class="control-group">
+                            <button class="control-btn active" data-layer="vessels">Embarcacoes</button>
+                            <button class="control-btn" data-layer="routes">Rotas</button>
+                            <button class="control-btn" data-layer="ports">Portos</button>
+                            <button class="control-btn" data-layer="zones">Zonas Economicas</button>
+                        </div>
+                        <div class="control-group">
+                            <button class="control-btn" data-action="zoom-in">+</button>
+                            <button class="control-btn" data-action="zoom-out">-</button>
+                            <button class="control-btn" data-action="locate">Localizar</button>
+                        </div>
+                    </div>
+                    <div class="map-info-panel">
+                        <div class="info-header">
+                            <span>Informacoes da Embarcacao</span>
+                            <button class="close-btn" id="closeInfoPanel">&times;</button>
+                        </div>
+                        <div class="info-content" id="vesselInfo">
+                            <p>Selecione uma embarcacao no mapa para ver detalhes</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Vessels Section -->
+            <section id="vessels-section" class="section">
+                <div class="section-header">
+                    <h2>Embarcacoes</h2>
+                    <div class="section-actions">
+                        <input type="text" placeholder="Pesquisar embarcacoes..." id="vesselSearch" class="search-input">
+                        <button class="btn btn-primary" id="addVesselBtn">Adicionar Embarcacao</button>
+                    </div>
+                </div>
+                <div class="filters">
+                    <select id="statusFilter" class="filter-select">
+                        <option value="">Todos os Status</option>
+                        <option value="AT_SEA">No Mar</option>
+                        <option value="ANCHORED">Fundado</option>
+                        <option value="MOORED">Atracado</option>
+                    </select>
+                    <select id="portFilter" class="filter-select">
+                        <option value="">Todos os Portos</option>
+                    </select>
+                    <select id="flagFilter" class="filter-select">
+                        <option value="">Todas as Bandeiras</option>
+                    </select>
+                    <select id="contractFilter" class="filter-select">
+                        <option value="">Todos os Contratos</option>
+                        <option value="B2B">B2B</option>
+                        <option value="B2G">B2G</option>
+                    </select>
+                </div>
+                <div class="table-container">
+                    <table class="data-table" id="vesselsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Bandeira</th>
+                                <th>Tipo</th>
+                                <th>Posicao</th>
+                                <th>Velocidade</th>
+                                <th>Status</th>
+                                <th>Origem</th>
+                                <th>Destino</th>
+                                <th>Acoes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vesselsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Ports Section -->
+            <section id="ports-section" class="section">
+                <div class="section-header">
+                    <h2>Portos Internacionais</h2>
+                    <div class="section-actions">
+                        <input type="text" placeholder="Pesquisar portos..." id="portSearch" class="search-input">
+                    </div>
+                </div>
+                <div class="filters">
+                    <select id="countryFilter" class="filter-select">
+                        <option value="">Todos os Paises</option>
+                    </select>
+                    <select id="blockFilter" class="filter-select">
+                        <option value="">Todos os Blocos</option>
+                        <option value="BRASIL">Brasil</option>
+                        <option value="MERCOSUL">Mercosul</option>
+                        <option value="BRICS">BRICS</option>
+                        <option value="CPLP">CPLP</option>
+                    </select>
+                    <select id="sizeFilter" class="filter-select">
+                        <option value="">Todos os Tamanhos</option>
+                        <option value="LARGE">Grande</option>
+                        <option value="MEDIUM">Medio</option>
+                        <option value="SMALL">Pequeno</option>
+                    </select>
+                </div>
+                <div class="table-container">
+                    <table class="data-table" id="portsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Pais</th>
+                                <th>Bloco</th>
+                                <th>Tipo</th>
+                                <th>Tamanho</th>
+                                <th>Capacidade</th>
+                                <th>Embarcacoes no Porto</th>
+                                <th>Tempo de Espera</th>
+                                <th>Acoes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="portsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Alerts Section -->
+            <section id="alerts-section" class="section">
+                <div class="section-header">
+                    <h2>Alertas RedFlag</h2>
+                    <div class="section-actions">
+                        <button class="btn btn-primary" id="refreshAlertsBtn">Atualizar Alertas</button>
+                    </div>
+                </div>
+                <div class="filters">
+                    <select id="alertTypeFilter" class="filter-select">
+                        <option value="">Todos os Tipos</option>
+                        <option value="DEVIATION">Desvio de Rota</option>
+                        <option value="UNAUTHORIZED_STOP">Parada Nao Autorizada</option>
+                        <option value="DOCUMENTATION_ISSUE">Problema de Documentacao</option>
+                        <option value="CONTAINER_ISSUE">Problema com Conteiner</option>
+                    </select>
+                    <select id="alertSeverityFilter" class="filter-select">
+                        <option value="">Todas as Severidades</option>
+                        <option value="LOW">Baixa</option>
+                        <option value="MEDIUM">Media</option>
+                        <option value="HIGH">Alta</option>
+                        <option value="CRITICAL">Critica</option>
+                    </select>
+                    <select id="alertStatusFilter" class="filter-select">
+                        <option value="">Todos os Status</option>
+                        <option value="ACTIVE">Ativo</option>
+                        <option value="ACKNOWLEDGED">Reconhecido</option>
+                        <option value="RESOLVED">Resolvido</option>
+                    </select>
+                </div>
+                <div class="table-container">
+                    <table class="data-table" id="alertsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Embarcacao</th>
+                                <th>Tipo</th>
+                                <th>Severidade</th>
+                                <th>Mensagem</th>
+                                <th>Timestamp</th>
+                                <th>Status</th>
+                                <th>Playbook</th>
+                                <th>Acoes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="alertsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Dashboard Section -->
+            <section id="dashboard-section" class="section">
+                <div class="dashboard-grid">
+                    <!-- Statistics Cards -->
+                    <div class="card stat-card">
+                        <div class="stat-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                                <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                                <line x1="12" y1="22.08" x2="12" y2="12"/>
+                            </svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="totalVessels">0</span>
+                            <span class="stat-label">Embarcacoes Totais</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card stat-card">
+                        <div class="stat-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                                <line x1="8" y1="21" x2="16" y2="21"/>
+                                <line x1="12" y1="17" x2="12" y2="21"/>
+                            </svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="totalPorts">0</span>
+                            <span class="stat-label">Portos Conectados</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card stat-card">
+                        <div class="stat-icon alert-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="12" y1="8" x2="12" y2="12"/>
+                                <line x1="12" y1="16" x2="12.01" y2="16"/>
+                            </svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="activeAlerts">0</span>
+                            <span class="stat-label">Alertas Ativos</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card stat-card">
+                        <div class="stat-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                <polyline points="22 4 12 14.01 9 11.01"/>
+                            </svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="atSeaVessels">0</span>
+                            <span class="stat-label">Embarcacoes no Mar</span>
+                        </div>
+                    </div>
+
+                    <!-- Tax Rates Card -->
+                    <div class="card tax-card">
+                        <h3>Taxas de Importacao</h3>
+                        <div class="tax-rates">
+                            <div class="tax-rate">
+                                <span class="tax-label">Mercosul</span>
+                                <span class="tax-value">0%</span>
+                            </div>
+                            <div class="tax-rate">
+                                <span class="tax-label">BRICS/CPLP</span>
+                                <span class="tax-value">10%</span>
+                            </div>
+                            <div class="tax-rate">
+                                <span class="tax-label">Outros</span>
+                                <span class="tax-value">20%</span>
+                            </div>
+                            <div class="tax-rate">
+                                <span class="tax-label">CBS</span>
+                                <span class="tax-value">12%</span>
+                            </div>
+                            <div class="tax-rate">
+                                <span class="tax-label">IBS</span>
+                                <span class="tax-value">17%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Port Distribution Chart -->
+                    <div class="card chart-card">
+                        <h3>Distribuicao por Bloco</h3>
+                        <canvas id="portDistributionChart"></canvas>
+                    </div>
+
+                    <!-- Alert Statistics Chart -->
+                    <div class="card chart-card">
+                        <h3>Alertas por Tipo</h3>
+                        <canvas id="alertTypeChart"></canvas>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="card activity-card">
+                        <h3>Atividade Recente</h3>
+                        <div class="activity-list" id="recentActivity">
+                            <p>Nenhuma atividade recente</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <span>SICX - Sistema Integrado da Cadeia Nacional</span>
+                <span>Rastreamento Satelital Maritimo v1.0.0</span>
+                <span>Atualizado em: <span id="lastUpdate">-</span></span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- WebSocket Status -->
+    <div class="ws-status" id="wsStatus">
+        <span class="ws-dot"></span>
+        <span>Desconectado</span>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/vessels.js"></script>
+    <script src="js/ports.js"></script>
+    <script src="js/alerts.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+{
+  "id": "RTE_BR_CN_001",
+  "name": "Santos to Shanghai",
+  "originPortId": "PORT_SANTOS",
+  "destinationPortId": "PORT_SHANGHAI",
+  "distance": 10500,
+  "duration": 350,
+  "waypoints": [
+    {"latitude": -23.9608, "longitude": -46.3158, "description": "Santos Port"},
+    {"latitude": -20, "longitude": -30, "description": "South Atlantic"},
+    {"latitude": 0, "longitude": -20, "description": "Equator Crossing"},
+    {"latitude": 10, "longitude": 0, "description": "West Africa"},
+    {"latitude": 20, "longitude": 20, "description": "Indian Ocean"},
+    {"latitude": 30, "longitude": 60, "description": "Arabian Sea"},
+    {"latitude": 31.2304, "longitude": 121.4737, "description": "Shanghai Port"}
+  ],
+  "maxDraught": 15,
+  "recommendedSpeed": 18,
+  "fuelConsumption": 150,
+  "tolls": [],
+  "restrictedAreas": [
+    {"name": "Strait of Malacca", "latitude": 2, "longitude": 100, "radius": 50}
+  ],
+  "weatherConditions": {
+    "averageWind": 15,
+    "averageWave": 2.5,
+    "stormFrequency": "LOW"
+  },
+  "block": "INTERNATIONAL",
+  "importTaxRate": 0.20
+}

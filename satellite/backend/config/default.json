@@ -1,0 +1,43 @@
+{
+  "server": {
+    "port": 3000,
+    "host": "localhost",
+    "websocketPort": 3001
+  },
+  "sentinelHub": {
+    "apiUrl": "https://services.sentinel-hub.com/api/v1",
+    "clientId": "YOUR_SENTINEL_HUB_CLIENT_ID",
+    "clientSecret": "YOUR_SENTINEL_HUB_CLIENT_SECRET"
+  },
+  "ais": {
+    "apiUrl": "https://data.marinetraffic.com/api",
+    "apiKey": "YOUR_AIS_API_KEY",
+    "updateInterval": 30000
+  },
+  "redFlag": {
+    "thresholdDistance": 50,
+    "thresholdStopTime": 3600000,
+    "autoApprove": false
+  },
+  "ports": {
+    "dataPath": "../../data/ports",
+    "vesselsPath": "../../data/vessels",
+    "routesPath": "../../data/routes"
+  },
+  "security": {
+    "mtls": {
+      "enabled": true,
+      "certPath": "../../certs/server.crt",
+      "keyPath": "../../certs/server.key",
+      "caPath": "../../certs/ca.crt"
+    }
+  },
+  "taxRates": {
+    "CBS": 0.12,
+    "IBS": 0.17,
+    "importMercosul": 0.00,
+    "importBRICS": 0.10,
+    "importCPLP": 0.10,
+    "importOther": 0.20
+  }
+}
